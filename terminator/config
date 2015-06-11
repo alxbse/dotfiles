@@ -1,0 +1,9 @@
+[global_config]
+  borderless = True
+  title_transmit_bg_color = '#646464'
+  scrollbar_position = 'disabled'
+[profiles]
+  [[default]]
+    use_system_font = False
+    font = Mono 10
+    show_titlebar = False
