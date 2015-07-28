@@ -46,6 +46,15 @@ web:
     - installed
     - pkgs:
       - firefox
+      - gst-libav
+      - gst-plugins-good
+
+network:
+  pkg:
+    - installed
+    - pkgs:
+      - libqmi
+      - wpa_supplicant
 
 misc:
   pkg:
