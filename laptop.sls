@@ -15,8 +15,10 @@ core:
       - vim
       - openssh
       - git
+      - openntpd
+      - bind-tools
 
-x:
+xorg:
   pkg:
     - installed
     - pkgs:
@@ -25,6 +27,9 @@ x:
       - xf86-input-synaptics
       - xf86-video-ati
       - xf86-video-intel
+  file.managed:
+    - name: /etc/X11/xorg.conf.d/00-keyboard.conf
+    - source: salt://xorg/keyboard.conf
 
 i3:
   pkg:
@@ -40,6 +45,12 @@ fonts:
     - installed
     - pkgs:
       - ttf-liberation
+      - ttf-bitstream-vera
+      - ttf-inconsolata
+      - ttf-ubuntu-font-family
+      - ttf-dejavu
+      - ttf-freefont
+      - ttf-linux-libertine
 
 web:
   pkg:
@@ -65,6 +76,17 @@ misc:
       - terminator
       - pulseaudio
       - openvpn
+      - feh
+      - keepass
+      - cifs-utils
+      - inkscape
+
+code:
+  pkg:
+    - installed
+    - pkgs:
+      - base-devel
+      - python-virtualenv
 
 config-i3:
   file.managed:
