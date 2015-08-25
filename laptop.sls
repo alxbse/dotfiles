@@ -66,6 +66,7 @@ network:
     - pkgs:
       - libqmi
       - wpa_supplicant
+      - nmap
 
 misc:
   pkg:
@@ -80,6 +81,9 @@ misc:
       - keepass
       - cifs-utils
       - inkscape
+      - mupdf
+      - dosfstools
+      - lightdm-gtk-greeter
 
 code:
   pkg:
@@ -87,17 +91,9 @@ code:
     - pkgs:
       - base-devel
       - python-virtualenv
+      - ghc
 
-config-i3:
-  file.managed:
-    - name: /home/{{ user }}/.config/i3/config
-    - source: salt://i3/config
-    - user: {{ user }}
-    - group: {{ user }}
-    - require:
-      - file: config-dir-config/i3
-
-{% for dir in ['config/i3', 'config/terminator', 'vim/colors'] %}
+{% for dir in ['config/i3', 'config/terminator', 'vim/colors', 'config/i3status'] %}
 config-dir-{{ dir }}:
   file.directory:
     - name: /home/{{ user }}/.{{ dir }}
@@ -105,6 +101,20 @@ config-dir-{{ dir }}:
     - user: {{ user }}
     - group: {{ user }}
 {% endfor %}
+
+config-i3:
+  file.managed:
+    - name: /home/{{ user }}/.config/i3/config
+    - source: salt://i3/config
+    - user: {{ user }}
+    - group: {{ user }}
+
+config-i3status:
+  file.managed:
+    - name: /home/{{ user }}/.config/i3status/config
+    - source: salt://i3/i3status.conf
+    - user: {{ user }}
+    - group: {{ user }}
 
 config-vim:
   file.managed:
@@ -129,3 +139,16 @@ config-xinit:
   file.managed:
     - name: /home/{{ user}}/.xinitrc
     - contents: 'exec i3'
+
+/etc/vconsole.conf:
+  file.append:
+    - text: KEYMAP=colemak
+    - makedirs: True
+
+/etc/lightdm/lightdm.conf:
+  file.replace:
+    - pattern: '#greeter-hide-users=false'
+    - repl: 'greeter-hide-users=true'
+
+lightdm:
+  service.enabled
