@@ -8,6 +8,12 @@
       - wheel
       - audio
       - video
+
+sudoers:
+  file.uncomment:
+    - name: /etc/sudoers
+    - regex: '%wheel ALL=\(ALL\) ALL'
+
 core:
   pkg:
     - installed
@@ -17,19 +23,24 @@ core:
       - git
       - openntpd
       - bind-tools
+      - gptfdisk
 
 xorg:
   pkg:
     - installed
     - pkgs:
-      - xorg-xinit
       - xorg-server
       - xf86-input-synaptics
       - xf86-video-ati
       - xf86-video-intel
+      - lightdm
+      - lightdm-gtk-greeter
   file.managed:
     - name: /etc/X11/xorg.conf.d/00-keyboard.conf
     - source: salt://xorg/keyboard.conf
+
+lightdm:
+  service.enabled
 
 i3:
   pkg:
@@ -39,6 +50,7 @@ i3:
       - i3lock
       - i3status
       - dmenu
+      - terminator
 
 fonts:
   pkg:
@@ -67,6 +79,7 @@ network:
       - libqmi
       - wpa_supplicant
       - nmap
+      - swaks
 
 misc:
   pkg:
@@ -74,16 +87,13 @@ misc:
     - pkgs:
       - unzip
       - rdesktop
-      - terminator
       - pulseaudio
       - openvpn
       - feh
-      - keepass
       - cifs-utils
-      - inkscape
       - mupdf
       - dosfstools
-      - lightdm-gtk-greeter
+      - markdown
 
 code:
   pkg:
@@ -93,7 +103,15 @@ code:
       - python-virtualenv
       - ghc
 
-{% for dir in ['config/i3', 'config/terminator', 'vim/colors', 'config/i3status'] %}
+{% if 'vmx' in grains['cpu_flags'] %}
+virtualization:
+  pkg:
+    - installed
+    - pkgs:
+      - qemu
+{% endif %}
+
+{% for dir in ['config/i3', 'config/terminator', 'vim/autoload', 'vim/bundle', 'config/i3status'] %}
 config-dir-{{ dir }}:
   file.directory:
     - name: /home/{{ user }}/.{{ dir }}
@@ -119,26 +137,32 @@ config-i3status:
 config-vim:
   file.managed:
     - name: /home/{{ user }}/.vimrc
+    - user: {{ user }}
+    - group: {{ user }}
     - source: salt://vim/vimrc
 
-{% for color in ['seoul256'] %}
-config-vim-{{ color }}:
+pathogen:
   file.managed:
-    - name: /home/{{ user }}/.vim/colors/{{ color }}.vim
-    - source: salt://vim/colors/{{ color }}.vim
-    - require:
-      - file: config-dir-vim/colors
-{% endfor %}
+    - name: /home/{{ user }}/.vim/autoload/pathogen.vim
+    - source: https://raw.githubusercontent.com/tpope/vim-pathogen/v2.4/autoload/pathogen.vim
+    - source_hash: sha256=8b78e5a7f15359023fcd3b858b06be31931ec3864c194c56d03c6cd7d8a5933c
+    - user: {{ user }}
+    - group: {{ user }}
+
+vim-airline:
+  git.latest:
+    - name: https://github.com/vim-airline/vim-airline.git
+    - target: /home/{{ user}}/.vim/bundle/vim-airline
+
+seoul256.vim:
+  git.latest:
+    - name: https://github.com/junegunn/seoul256.vim.git
+    - target: /home/{{ user }}/.vim/bundle/seoul256.vim
 
 config-terminator:
   file.managed:
     - name: /home/{{ user}}/.config/terminator/config
     - source: salt://terminator/config
-
-config-xinit:
-  file.managed:
-    - name: /home/{{ user}}/.xinitrc
-    - contents: 'exec i3'
 
 /etc/vconsole.conf:
   file.append:
@@ -149,6 +173,3 @@ config-xinit:
   file.replace:
     - pattern: '#greeter-hide-users=false'
     - repl: 'greeter-hide-users=true'
-
-lightdm:
-  service.enabled

@@ -1,8 +1,16 @@
-set relativenumber
-set colorcolumn=80,115
-set tabstop=2
-colorscheme seoul256 
+execute pathogen#infect()
 syntax on
+filetype plugin indent on
 
-autocmd InsertEnter * set number
-autocmd InsertLeave * set relativenumber
+let g:seoul256_background = 234
+colorscheme seoul256
+
+set laststatus=2
+set timeoutlen=50
+set cursorline
+set list!
+set listchars=trail:~
+set number
+set relativenumber
+set shiftwidth=2
+let &colorcolumn=join(range(81,999), ",")
