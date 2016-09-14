@@ -1,13 +1,9 @@
-{% set user='alex' %}
+{% from "map.jinja" import dotfiles with context %}
 
-{{ user }}:
-  user.present:
-    - shell: /bin/bash
-    - home: /home/{{ user }}
-    - groups:
-      - wheel
-      - audio
-      - video
+include:
+  - user
+  - vim
+  - xmonad
 
 sudoers:
   file.uncomment:
@@ -18,7 +14,6 @@ core:
   pkg:
     - installed
     - pkgs:
-      - vim
       - openssh
       - git
       - openntpd
@@ -39,9 +34,11 @@ xorg:
     - name: /etc/X11/xorg.conf.d/00-keyboard.conf
     - source: salt://xorg/keyboard.conf
 
-lightdm:
-  service.enabled
-
+# cmd.run hack needed to support arch-chroot install environment
+lightdm_enable:
+  cmd.run:
+    - name: systemctl enable lightdm
+    - unless: ls /etc/systemd/system/display-manager.service
 i3:
   pkg:
     - installed
@@ -114,54 +111,29 @@ virtualization:
 {% for dir in ['config/i3', 'config/terminator', 'vim/autoload', 'vim/bundle', 'config/i3status'] %}
 config-dir-{{ dir }}:
   file.directory:
-    - name: /home/{{ user }}/.{{ dir }}
+    - name: /home/{{ dotfiles.user }}/.{{ dir }}
     - makedirs: True
-    - user: {{ user }}
-    - group: {{ user }}
+    - user: {{ dotfiles.user }}
+    - group: {{ dotfiles.user }}
 {% endfor %}
 
 config-i3:
   file.managed:
-    - name: /home/{{ user }}/.config/i3/config
+    - name: /home/{{ dotfiles.user }}/.config/i3/config
     - source: salt://i3/config
-    - user: {{ user }}
-    - group: {{ user }}
+    - user: {{ dotfiles.user }}
+    - group: {{ dotfiles.user }}
 
 config-i3status:
   file.managed:
-    - name: /home/{{ user }}/.config/i3status/config
+    - name: /home/{{ dotfiles.user }}/.config/i3status/config
     - source: salt://i3/i3status.conf
-    - user: {{ user }}
-    - group: {{ user }}
-
-config-vim:
-  file.managed:
-    - name: /home/{{ user }}/.vimrc
-    - user: {{ user }}
-    - group: {{ user }}
-    - source: salt://vim/vimrc
-
-pathogen:
-  file.managed:
-    - name: /home/{{ user }}/.vim/autoload/pathogen.vim
-    - source: https://raw.githubusercontent.com/tpope/vim-pathogen/v2.4/autoload/pathogen.vim
-    - source_hash: sha256=8b78e5a7f15359023fcd3b858b06be31931ec3864c194c56d03c6cd7d8a5933c
-    - user: {{ user }}
-    - group: {{ user }}
-
-vim-airline:
-  git.latest:
-    - name: https://github.com/vim-airline/vim-airline.git
-    - target: /home/{{ user}}/.vim/bundle/vim-airline
-
-seoul256.vim:
-  git.latest:
-    - name: https://github.com/junegunn/seoul256.vim.git
-    - target: /home/{{ user }}/.vim/bundle/seoul256.vim
+    - user: {{ dotfiles.user }}
+    - group: {{ dotfiles.user }}
 
 config-terminator:
   file.managed:
-    - name: /home/{{ user}}/.config/terminator/config
+    - name: /home/{{ dotfiles.user }}/.config/terminator/config
     - source: salt://terminator/config
 
 /etc/vconsole.conf:

@@ -3,6 +3,8 @@ syntax on
 filetype plugin indent on
 
 let g:seoul256_background = 234
+let g:airline_powerline_fonts = 1
+
 colorscheme seoul256
 
 set laststatus=2

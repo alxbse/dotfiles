@@ -5,5 +5,5 @@
 [profiles]
   [[default]]
     use_system_font = False
-    font = Mono 10
+    font = Mono 9
     show_titlebar = False

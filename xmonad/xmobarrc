@@ -1,0 +1,20 @@
+Config
+  { template = "%StdinReader% }{ %disku% | %cpu% | %memory% | %battery% | %date%"
+  , alignSep = "}{"
+  , commands =
+    [ Run Memory ["-t","Mem: <usedratio>%"] 30
+    , Run Date "[%F] %T" "date" 30
+    , Run BatteryP ["BAT0"]
+                   [ "-t", "Bat:<left>% [<timeleft>] (<acstatus>)"
+                   , "-L", "15", "-H", "65", "-p", "3"
+                   , "-l", "red", "-h", "green"
+                   , "--", "-L", "-15", "-H", "-5"
+                   , "-l", "red", "-m", "blue", "-h", "green"
+                   ] 30
+    , Run StdinReader
+    , Run Cpu [] 30
+    , Run DiskU [("/", "Sto: <free>")] [] 120
+    ]
+  , font = "xft:Bitstream Vera Sans Mono:size=8:antialias=False"
+  , persistent = False
+  }

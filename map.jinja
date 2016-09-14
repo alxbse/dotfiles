@@ -1,0 +1,6 @@
+{% set dotfiles = salt['grains.filter_by']({
+  'Arch': {
+    'user': 'alex',
+    'pass': '$1$alxbse$m9JXG0J2R1XJCH7PR8Jpz/'
+  },
+}, merge=salt['pillar.get']('dotfiles:lookup')) %}
