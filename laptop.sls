@@ -6,6 +6,15 @@ include:
   - terminator
   - xmonad
 
+sudo:
+  pkg.installed
+
+sudo-lectured:
+  file.managed:
+    - name: /var/db/sudo/lectured/{{ dotfiles.user }}
+    - makedirs: True
+    - group: {{ dotfiles.user }}
+
 sudoers:
   file.uncomment:
     - name: /etc/sudoers
@@ -88,7 +97,6 @@ code:
   pkg:
     - installed
     - pkgs:
-      - base-devel
       - python-virtualenv
       - ghc
 

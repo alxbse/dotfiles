@@ -7,6 +7,7 @@ xmonad-pkgs:
       - xmonad
       - xmonad-contrib
       - xmobar
+      - dmenu
 
 xmonad-config-dir:
   file.directory:
