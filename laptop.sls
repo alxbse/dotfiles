@@ -3,6 +3,7 @@
 include:
   - user
   - vim
+  - terminator
   - xmonad
 
 sudoers:
@@ -39,15 +40,6 @@ lightdm_enable:
   cmd.run:
     - name: systemctl enable lightdm
     - unless: ls /etc/systemd/system/display-manager.service
-i3:
-  pkg:
-    - installed
-    - pkgs:
-      - i3-wm
-      - i3lock
-      - i3status
-      - dmenu
-      - terminator
 
 fonts:
   pkg:
@@ -107,34 +99,6 @@ virtualization:
     - pkgs:
       - qemu
 {% endif %}
-
-{% for dir in ['config/i3', 'config/terminator', 'vim/autoload', 'vim/bundle', 'config/i3status'] %}
-config-dir-{{ dir }}:
-  file.directory:
-    - name: /home/{{ dotfiles.user }}/.{{ dir }}
-    - makedirs: True
-    - user: {{ dotfiles.user }}
-    - group: {{ dotfiles.user }}
-{% endfor %}
-
-config-i3:
-  file.managed:
-    - name: /home/{{ dotfiles.user }}/.config/i3/config
-    - source: salt://i3/config
-    - user: {{ dotfiles.user }}
-    - group: {{ dotfiles.user }}
-
-config-i3status:
-  file.managed:
-    - name: /home/{{ dotfiles.user }}/.config/i3status/config
-    - source: salt://i3/i3status.conf
-    - user: {{ dotfiles.user }}
-    - group: {{ dotfiles.user }}
-
-config-terminator:
-  file.managed:
-    - name: /home/{{ dotfiles.user }}/.config/terminator/config
-    - source: salt://terminator/config
 
 /etc/vconsole.conf:
   file.append:

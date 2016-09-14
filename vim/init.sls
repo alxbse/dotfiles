@@ -15,6 +15,7 @@ pathogen:
     - name: /home/{{ dotfiles.user }}/.vim/autoload/pathogen.vim
     - source: https://raw.githubusercontent.com/tpope/vim-pathogen/v2.4/autoload/pathogen.vim
     - source_hash: sha256=8b78e5a7f15359023fcd3b858b06be31931ec3864c194c56d03c6cd7d8a5933c
+    - makedirs: True
     - user: {{ dotfiles.user }}
     - group: {{ dotfiles.user }}
 
