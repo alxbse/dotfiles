@@ -34,7 +34,6 @@ ROOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==3' 
 mkfs.fat -F32 $BOOTPART
 mkfs.ext4 $ROOTPART
 
-echo "mounting partitions"
 mount $ROOTPART /mnt
 mkdir /mnt/boot
 mount $BOOTPART /mnt/boot
@@ -44,7 +43,7 @@ genfstab -U /mnt > /mnt/etc/fstab
 
 ROOTUUID=`blkid -s PARTUUID -o value $ROOTPART`
 
-cat <<EOF > /mnt/opt/bootstrap.sh
+cat <<EOF > /mnt/bootstrap.sh
 #!/bin/sh
 set -e
 set -x
@@ -61,9 +60,10 @@ cp /usr/share/systemd/bootctl/arch.conf /boot/loader/entries/arch.conf
 sed -i "s/PARTUUID=XXXX/PARTUUID=$ROOTUUID/g" /boot/loader/entries/arch.conf
 sed -i 's/rootfstype=XXXX/rootfstype=ext4/g' /boot/loader/entries/arch.conf
 
-pacman -S --noconfirm git python2-pygit2 salt-zmq sudo
+pacman -S --noconfirm git python2-pygit2 salt-zmq
 
 salt-call --local state.apply laptop
+echo yes | pacman -S --clean --clean
 exit
 EOF
 
@@ -78,7 +78,16 @@ gitfs_remotes:
   - https://github.com/alxbse/dotfiles.git
 EOF
 
+if [ -f "dotfiles.sls" ]; then
+mkdir /mnt/srv/pillar
+cp dotfiles.sls /mnt/srv/pillar/dotfiles.sls
+cat <<EOF > /mnt/srv/pillar/top.sls
+base:
+  '*':
+    - dotfiles
+EOF
+fi
 
-chmod +x /mnt/opt/bootstrap.sh
-
-arch-chroot /mnt /opt/bootstrap.sh
+chmod +x /mnt/bootstrap.sh
+arch-chroot /mnt /bootstrap.sh
+rm /mnt/bootstrap.sh

@@ -13,6 +13,7 @@ sudo-lectured:
   file.managed:
     - name: /var/db/sudo/lectured/{{ dotfiles.user }}
     - makedirs: True
+    - replace: False
     - group: {{ dotfiles.user }}
 
 sudoers:
