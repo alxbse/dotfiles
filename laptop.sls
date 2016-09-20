@@ -27,7 +27,6 @@ core:
     - pkgs:
       - openssh
       - git
-      - openntpd
       - bind-tools
       - gptfdisk
 
@@ -78,7 +77,6 @@ network:
       - libqmi
       - wpa_supplicant
       - nmap
-      - swaks
 
 misc:
   pkg:
@@ -93,6 +91,7 @@ misc:
       - mupdf
       - dosfstools
       - markdown
+      - scrot
 
 code:
   pkg:

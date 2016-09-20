@@ -32,16 +32,20 @@ BOOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==2' 
 ROOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==3' | cut -d '"' -f2`
 
 mkfs.fat -F32 $BOOTPART
-mkfs.ext4 $ROOTPART
 
-mount $ROOTPART /mnt
+#let's encrypt (badly)
+echo -n '123' | cryptsetup -v luksFormat $ROOTPART
+echo -n '123' | cryptsetup open $ROOTPART cryptroot
+mkfs.ext4 /dev/mapper/cryptroot
+
+mount /dev/mapper/cryptroot /mnt
 mkdir /mnt/boot
 mount $BOOTPART /mnt/boot
 
 pacstrap /mnt base
 genfstab -U /mnt > /mnt/etc/fstab
 
-ROOTUUID=`blkid -s PARTUUID -o value $ROOTPART`
+ROOTUUID=`blkid -s UUID -o value $ROOTPART`
 
 cat <<EOF > /mnt/bootstrap.sh
 #!/bin/sh
@@ -57,13 +61,17 @@ bootctl --path=/boot install
 mkdir -p /boot/loader/entries
 cp /usr/share/systemd/bootctl/loader.conf /boot/loader/loader.conf
 cp /usr/share/systemd/bootctl/arch.conf /boot/loader/entries/arch.conf
-sed -i "s/PARTUUID=XXXX/PARTUUID=$ROOTUUID/g" /boot/loader/entries/arch.conf
-sed -i 's/rootfstype=XXXX/rootfstype=ext4/g' /boot/loader/entries/arch.conf
+sed -i "s/root=PARTUUID=XXXX/cryptdevice=UUID=$ROOTUUID:cryptroot/g" /boot/loader/entries/arch.conf
+sed -i 's/rootfstype=XXXX/root=\/dev\/mapper\/cryptroot/g' /boot/loader/entries/arch.conf
+sed -i 's/block filesystems keyboard/block encrypt filesystems keyboard/g' /etc/mkinitcpio.conf
+mkinitcpio -p linux
 
 pacman -S --noconfirm git python2-pygit2 salt-zmq
 
-salt-call --local state.apply laptop
+salt-call --local state.apply laptop -l debug
+
 echo yes | pacman -S --clean --clean
+passwd -l root
 exit
 EOF
 

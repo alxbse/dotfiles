@@ -8,6 +8,7 @@ xmonad-pkgs:
       - xmonad-contrib
       - xmobar
       - dmenu
+      - slock
 
 xmonad-config-dir:
   file.directory:
