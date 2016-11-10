@@ -83,7 +83,6 @@ misc:
     - installed
     - pkgs:
       - unzip
-      - rdesktop
       - pulseaudio
       - openvpn
       - feh
