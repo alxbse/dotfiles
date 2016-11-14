@@ -1,6 +1,7 @@
 {% from "map.jinja" import dotfiles with context %}
 
 include:
+  - xorg
   - user
   - vim
   - terminator
@@ -8,13 +9,6 @@ include:
 
 sudo:
   pkg.installed
-
-sudo-lectured:
-  file.managed:
-    - name: /var/db/sudo/lectured/{{ dotfiles.user }}
-    - makedirs: True
-    - replace: False
-    - group: {{ dotfiles.user }}
 
 sudoers:
   file.uncomment:
@@ -28,21 +22,13 @@ core:
       - openssh
       - git
       - bind-tools
-      - gptfdisk
 
-xorg:
+lightdm:
   pkg:
     - installed
     - pkgs:
-      - xorg-server
-      - xf86-input-synaptics
-      - xf86-video-ati
-      - xf86-video-intel
       - lightdm
       - lightdm-gtk-greeter
-  file.managed:
-    - name: /etc/X11/xorg.conf.d/00-keyboard.conf
-    - source: salt://xorg/keyboard.conf
 
 # cmd.run hack needed to support arch-chroot install environment
 lightdm_enable:
@@ -91,13 +77,19 @@ misc:
       - dosfstools
       - markdown
       - scrot
+      - tree
 
+# we COULD just install base-devel for most of these, but salt flags package groups as failed
 code:
   pkg:
     - installed
     - pkgs:
       - python-virtualenv
       - ghc
+      - make
+      - pkg-config
+      - flex
+      - bison
 
 {% if 'vmx' in grains['cpu_flags'] %}
 virtualization:
@@ -105,6 +97,8 @@ virtualization:
     - installed
     - pkgs:
       - qemu
+      - ovmf
+      - qemu-arch-extra
 {% endif %}
 
 /etc/vconsole.conf:
@@ -116,3 +110,8 @@ virtualization:
   file.replace:
     - pattern: '#greeter-hide-users=false'
     - repl: 'greeter-hide-users=true'
+
+aur_deps:
+  pkg.installed:
+    - pkgs:
+      - fakeroot
