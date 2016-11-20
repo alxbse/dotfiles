@@ -11,7 +11,7 @@
       - audio
       - video
 
-/home/{{ dotfiles.user }}/src:
+/home/{{ dotfiles.user }}/source:
   file.directory:
     - user: {{ dotfiles.user }}
     - group: {{ dotfiles.user }}

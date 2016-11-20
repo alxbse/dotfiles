@@ -6,6 +6,7 @@ include:
   - vim
   - terminator
   - xmonad
+  - firefox
 
 sudo:
   pkg.installed
@@ -48,14 +49,6 @@ fonts:
       - ttf-freefont
       - ttf-linux-libertine
 
-web:
-  pkg:
-    - installed
-    - pkgs:
-      - firefox
-      - gst-libav
-      - gst-plugins-good
-
 network:
   pkg:
     - installed
@@ -91,7 +84,7 @@ code:
       - flex
       - bison
 
-{% if 'vmx' in grains['cpu_flags'] %}
+{% if 'vmx' in grains['cpu_flags'] and grains['virtual'] == 'physical'%}
 virtualization:
   pkg:
     - installed

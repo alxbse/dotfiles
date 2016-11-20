@@ -5,6 +5,7 @@ xorg_pkgs:
       - xf86-input-synaptics
       - xf86-video-intel
       - xorg-xrandr
+      - xorg-xprop
 
 /etc/X11/xorg.conf.d/00-keyboard.conf:
   file.managed:

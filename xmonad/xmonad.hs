@@ -40,8 +40,7 @@ myConfig = defaultConfig
 myManageHook = composeAll
   [ className =? "Qemu-system-x86_64" --> doFloat
   , className =? "qemu-system-x86_64" --> doFloat
-  , className =? "Gvncviewer" --> doFloat
-  , className =? "rdesktop" --> doFloat
+  , className =? "VirtualBox" --> doFloat
   ]
 
 myLayoutHook = avoidStruts (tall ||| three ) ||| full

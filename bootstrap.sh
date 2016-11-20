@@ -28,8 +28,8 @@ EOF
 
 gdisk $ROOTDISK < /tmp/gdisk
 
-BOOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==2' | cut -d '"' -f2`
-ROOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==3' | cut -d '"' -f2`
+BOOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==3' | cut -d '"' -f2`
+ROOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==2' | cut -d '"' -f2`
 
 mkfs.fat -F32 $BOOTPART
 
@@ -66,7 +66,7 @@ sed -i 's/rootfstype=XXXX/root=\/dev\/mapper\/cryptroot/g' /boot/loader/entries/
 sed -i 's/block filesystems keyboard/block encrypt filesystems keyboard/g' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
-pacman -S --noconfirm git python2-pygit2 salt-zmq
+pacman -S --noconfirm git python2-pygit2 salt
 
 salt-call --local state.apply laptop -l debug
 
@@ -79,6 +79,7 @@ mkdir -p /mnt/etc/salt/minion.d
 mkdir -p /mnt/var/log/salt
 
 cat <<EOF > /mnt/etc/salt/minion.d/masterless.conf
+failhard: True
 file_client: local
 fileserver_backend:
   - git
@@ -99,3 +100,6 @@ fi
 chmod +x /mnt/bootstrap.sh
 arch-chroot /mnt /bootstrap.sh
 rm /mnt/bootstrap.sh
+
+umount $BOOTPART
+umount $ROOTPART

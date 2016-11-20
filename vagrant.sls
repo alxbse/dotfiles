@@ -8,6 +8,7 @@ virtualbox:
     - pkgs:
       - virtualbox
       - virtualbox-host-dkms
+      - virtualbox-guest-iso
       - linux-headers
 
 vboxdrv:
