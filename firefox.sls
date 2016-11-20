@@ -1,5 +1,5 @@
 firefox_pkgs:
-  pkg.installed
+  pkg.installed:
     - pkgs:
       - firefox
       - gst-libav
