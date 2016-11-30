@@ -24,6 +24,7 @@ shell:
 
 /home/{{ dotfiles.user }}/.config/user-dirs.dirs:
   file.managed:
+    - makedirs: True
     - contents: |
         XDG_DESKTOP_DIR="$HOME/desktop"
         XDG_DOWNLOAD_DIR="$HOME/downloads"
