@@ -1,9 +1,11 @@
+{% set battery = ' | %battery%' if has_battery else '' -%}
 Config
-  { template = "%StdinReader% }{ %disku% | %cpu% | %memory% | %battery% | %date%"
+  { template = "%StdinReader% }{ %disku% | %cpu% | %memory%{{ battery }} | %date%"
   , alignSep = "}{"
   , commands =
     [ Run Memory ["-t","Mem: <usedratio>%"] 30
     , Run Date "[%F] %T" "date" 30
+{%- if has_battery %}
     , Run BatteryP ["BAT0"]
                    [ "-t", "Bat:<left>% [<timeleft>] (<acstatus>)"
                    , "-L", "15", "-H", "65", "-p", "3"
@@ -11,6 +13,7 @@ Config
                    , "--", "-L", "-15", "-H", "-5"
                    , "-l", "red", "-m", "blue", "-h", "green"
                    ] 30
+{% endif %}
     , Run StdinReader
     , Run Cpu [] 30
     , Run DiskU [("/", "Sto: <free>")] [] 120

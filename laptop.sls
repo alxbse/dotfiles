@@ -71,6 +71,8 @@ misc:
       - markdown
       - scrot
       - tree
+      - jq
+      - imagemagick
 
 # we COULD just install base-devel for most of these, but salt flags package groups as failed
 code:
@@ -83,6 +85,8 @@ code:
       - pkg-config
       - flex
       - bison
+      - cabal-install
+      - stack
 
 {% if 'vmx' in grains['cpu_flags'] and grains['virtual'] == 'physical'%}
 virtualization:
@@ -108,3 +112,8 @@ aur_deps:
   pkg.installed:
     - pkgs:
       - fakeroot
+
+dhcpcd_noarp:
+  file.append:
+    - name: /etc/dhcpcd.conf
+    - text: noarp

@@ -41,6 +41,7 @@ myManageHook = composeAll
   [ className =? "Qemu-system-x86_64" --> doFloat
   , className =? "qemu-system-x86_64" --> doFloat
   , className =? "VirtualBox" --> doFloat
+  , className =? "VBoxSDL" --> doFloat
   ]
 
 myLayoutHook = avoidStruts (tall ||| three ) ||| full

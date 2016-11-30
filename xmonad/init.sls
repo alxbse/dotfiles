@@ -24,9 +24,12 @@ xmonad-config:
     - user: {{ dotfiles.user }}
     - group: {{ dotfiles.user }}
 
-xmobar-config:
+xmobar_config:
   file.managed:
     - name: /home/{{ dotfiles.user }}/.xmobarrc
     - source: salt://xmonad/xmobarrc
     - user: {{ dotfiles.user }}
     - group: {{ dotfiles.user }}
+    - template: jinja
+    - context:
+        has_battery: {{ 'batteries' in grains and grains['batteries'] is iterable }}

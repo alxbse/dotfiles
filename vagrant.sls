@@ -10,6 +10,7 @@ virtualbox:
       - virtualbox-host-dkms
       - virtualbox-guest-iso
       - linux-headers
+      - net-tools
 
 vboxdrv:
   kmod.present

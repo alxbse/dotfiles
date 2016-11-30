@@ -1,5 +1,11 @@
 {% from "map.jinja" import dotfiles with context %}
 
+shell:
+  pkg.installed:
+    - pkgs:
+      - bash
+      - bash-completion
+
 {{ dotfiles.user }}:
   user.present:
     - shell: /bin/bash
@@ -29,15 +35,15 @@ ssh_keepalive:
     - makedirs: True
     - contents: ServerAliveInterval 120
 
-irssi:
-  pkg.installed
-
-irssi_conf:
-  file.managed:
-    - name: /home/{{ dotfiles.user }}/.irssi/config
-    - source: salt://user/irssi.conf
-    - template: jinja
-    - makedirs: True
+#irssi:
+#  pkg.installed
+#
+#irssi_conf:
+#  file.managed:
+#    - name: /home/{{ dotfiles.user }}/.irssi/config
+#    - source: salt://user/irssi.conf
+#    - template: jinja
+#    - makedirs: True
 
 sudo-lectured:
   file.managed:

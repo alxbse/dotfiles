@@ -7,3 +7,4 @@
     use_system_font = False
     font = Mono 9
     show_titlebar = False
+    scrollback_lines = 4096
