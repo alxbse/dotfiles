@@ -4,8 +4,8 @@ include:
   - xorg
   - user
   - vim
-  - terminator
-  - xmonad
+  - {{ dotfiles.terminal }}
+  - {{ dotfiles.wm }}
   - firefox
 
 sudo:
@@ -24,18 +24,21 @@ core:
       - git
       - bind-tools
 
-lightdm:
-  pkg:
-    - installed
-    - pkgs:
-      - lightdm
-      - lightdm-gtk-greeter
+nodm:
+  pkg.installed
+
+nodm_conf:
+  file.managed:
+    - name: /etc/nodm.conf
+    - contents: |
+        NODM_USER={{ dotfiles.user }}
+        NODM_XSESSION=/home/{{ dotfiles.user }}/.xinitrc
 
 # cmd.run hack needed to support arch-chroot install environment
-lightdm_enable:
+nodm_enable:
   cmd.run:
-    - name: systemctl enable lightdm
-    - unless: ls /etc/systemd/system/display-manager.service
+    - name: systemctl enable nodm
+    - unless: ls /etc/systemd/system/multi-user.target.wants/nodm.service
 
 fonts:
   pkg:
@@ -53,9 +56,10 @@ network:
   pkg:
     - installed
     - pkgs:
-      - libqmi
       - wpa_supplicant
       - nmap
+      - swaks
+      - perl-net-ssleay
 
 misc:
   pkg:
@@ -63,16 +67,20 @@ misc:
     - pkgs:
       - unzip
       - pulseaudio
-      - openvpn
       - feh
-      - cifs-utils
       - mupdf
-      - dosfstools
       - markdown
       - scrot
       - tree
       - jq
       - imagemagick
+      - dmidecode
+      - p7zip
+      - dosfstools
+      - pngcrush
+      - pulseaudio-alsa
+      - cmus
+      - sshfs
 
 # we COULD just install base-devel for most of these, but salt flags package groups as failed
 code:
@@ -87,6 +95,9 @@ code:
       - bison
       - cabal-install
       - stack
+      - autoconf
+      - automake
+      - gradle
 
 {% if 'vmx' in grains['cpu_flags'] and grains['virtual'] == 'physical'%}
 virtualization:
@@ -103,11 +114,6 @@ virtualization:
     - text: KEYMAP=colemak
     - makedirs: True
 
-/etc/lightdm/lightdm.conf:
-  file.replace:
-    - pattern: '#greeter-hide-users=false'
-    - repl: 'greeter-hide-users=true'
-
 aur_deps:
   pkg.installed:
     - pkgs:
@@ -117,3 +123,28 @@ dhcpcd_noarp:
   file.append:
     - name: /etc/dhcpcd.conf
     - text: noarp
+
+laptop_timesyncd:
+  file.replace:
+    - name: /etc/systemd/timesyncd.conf
+    - pattern: '#NTP='
+    - repl: NTP=ntp3.sptime.se ntp4.sptime.se
+
+laptop_enablentp:
+  cmd.run:
+    - name: timedatectl set-ntp true
+    - onchanges:
+      - file: laptop_timesyncd
+
+#laptop_boot_options:
+#  file.line:
+#    - name: /boot/loader/entries/arch.conf
+#    - location: end
+#    - before: 'options cryptdevice=UUID=.*:cryptroot root=/dev/mapper/cryptroot add_efi_mmap'
+#    - mode: insert
+#    - content: ' intel_idle.max_cstate=1'
+
+laptop_color_pacman:
+  file.uncomment:
+     - name: /etc/pacman.conf
+     - regex: Color

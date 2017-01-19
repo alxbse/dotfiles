@@ -28,8 +28,8 @@ EOF
 
 gdisk $ROOTDISK < /tmp/gdisk
 
-BOOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==3' | cut -d '"' -f2`
-ROOTPART=`lsblk --output NAME,PARTLABEL --pairs --paths $ROOTDISK | awk 'NR==2' | cut -d '"' -f2`
+BOOTPART=`lsblk --output NAME,MAJ:MIN --pairs --paths $ROOTDISK --sort MAJ:MIN | awk 'NR==2' | cut -d '"' -f2`
+ROOTPART=`lsblk --output NAME,MAJ:MIN --pairs --paths $ROOTDISK --sort MAJ:MIN | awk 'NR==3' | cut -d '"' -f2`
 
 mkfs.fat -F32 $BOOTPART
 
@@ -52,7 +52,7 @@ cat <<EOF > /mnt/bootstrap.sh
 set -e
 set -x
 
-ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
+#ln -s /usr/share/zoneinfo/Europe/Stockholm /etc/localtime
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen
 echo 'LANG=en_US.UTF-8' > /etc/locale.conf
 locale-gen
@@ -68,7 +68,8 @@ mkinitcpio -p linux
 
 pacman -S --noconfirm git python2-pygit2 salt
 
-salt-call --local state.apply laptop -l debug
+salt-call saltutil.sync_grains -l debug
+salt-call state.apply laptop -l debug
 
 echo yes | pacman -S --clean --clean
 passwd -l root
@@ -101,5 +102,5 @@ chmod +x /mnt/bootstrap.sh
 arch-chroot /mnt /bootstrap.sh
 rm /mnt/bootstrap.sh
 
-umount $BOOTPART
-umount $ROOTPART
+umount /mnt/boot
+umount /mnt
