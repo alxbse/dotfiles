@@ -43,6 +43,7 @@ urxvt_xresources_include:
 urxvt_xrdb:
   cmd.run:
     - name: 'xrdb -I$HOME /home/{{ dotfiles.user }}/.Xresources'
+    - onlyif: test -v DISPLAY
     - onchanges:
       - file: urxvt_xresources
       - file: urxvt_xresources_include

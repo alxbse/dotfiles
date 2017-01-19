@@ -87,6 +87,7 @@ xmonad_fontawesome:
 xmonad_fontcache:
   cmd.run:
     - name: fc-cache
+    - onlyif: test -v DISPLAY
     - onchanges:
       - file: xmonad_fontawesome
 
