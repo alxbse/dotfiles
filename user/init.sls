@@ -71,12 +71,6 @@ sudo-lectured:
     - replace: False
     - group: {{ dotfiles.user }}
 
-shell_prompt:
-  file.replace:
-    - name: /home/{{ dotfiles.user }}/.bashrc
-    - pattern: PS1=.*
-    - repl: PS1="\[$(tput setaf 2)\][\W] \[$(tput setaf 3)\]$\[$(tput sgr0)\] "
-
 user_color_grep:
   file.append:
     - name: /home/{{ dotfiles.user }}/.bashrc
@@ -85,5 +79,14 @@ user_color_grep:
 user_pulseaudio:
   file.managed:
     - name: /home/{{ dotfiles.user }}/.config/pulse/client.conf
+    - makedirs: True
+    - user: {{ dotfiles.user }}
+    - group: {{ dotfiles.user }}
     - contents: |
         autospawn = yes
+
+shell_prompt:
+  file.replace:
+    - name: /home/{{ dotfiles.user }}/.bashrc
+    - pattern: PS1=.*
+    - repl: PS1="\[$(tput setaf 2)\][\W] \[$(tput setaf 3)\]$\[$(tput sgr0)\] "
