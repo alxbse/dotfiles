@@ -82,6 +82,7 @@ xmonad_fontawesome:
     - name: /home/{{ dotfiles.user }}/.local/share/fonts/fontawesome-webfont.ttf
     - source: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf
     - source_hash: sha256=aa58f33f239a0fb02f5c7a6c45c043d7a9ac9a093335806694ecd6d4edc0d6a8
+    - makedirs: True
     - runas: {{ dotfiles.user }}
 
 xmonad_fontcache:
