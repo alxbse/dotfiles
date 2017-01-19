@@ -1,23 +1,27 @@
-{% set battery = ' | %battery%' if has_battery else '' -%}
+{% set battery = ' %battery%' if has_battery else '' -%}
 Config
-  { template = "%StdinReader% }{ %disku% | %cpu% | %memory%{{ battery }} | %date%"
+  { template = "%StdinReader% } %date% { %cmus% %disku% %cpu% %memory%{{ battery }}"
   , alignSep = "}{"
   , commands =
-    [ Run Memory ["-t","Mem: <usedratio>%"] 30
-    , Run Date "[%F] %T" "date" 30
+    [ Run Memory ["-t","<fn=1><fc=#72616d>\xf201</fc></fn> <usedratio>%"] 30
+    , Run Date "<fn=1><fc=#ffdc00>\xf133</fc></fn> %F <fn=1><fc=#ffdc00>\xf017</fc></fn> %T" "date" 30
 {%- if has_battery %}
     , Run BatteryP ["BAT0"]
-                   [ "-t", "Bat:<left>% [<timeleft>] (<acstatus>)"
-                   , "-L", "15", "-H", "65", "-p", "3"
-                   , "-l", "red", "-h", "green"
-                   , "--", "-L", "-15", "-H", "-5"
-                   , "-l", "red", "-m", "blue", "-h", "green"
+                   [ "-t", "<fc=#626174><acstatus></fc> <left>%"
+--                   , "-L", "15", "-H", "65", "-p", "3"
+--                   , "-l", "red", "-h", "green"
+--                   , "--", "-L", "-15", "-H", "-5"
+--                   , "-l", "red", "-m", "blue", "-h", "green"
+                   , "--", "-o", "<fn=1>\xf241</fn>", "-O", "<fn=1>\xf1e6</fn>"
+                   , "-i", "<fn=1>\xf240</fn>"
                    ] 30
 {% endif %}
     , Run StdinReader
-    , Run Cpu [] 30
-    , Run DiskU [("/", "Sto: <free>")] [] 120
+    , Run Cpu ["-t", "<fn=1><fc=#637075>\xf080</fc></fn> <total>%"] 30
+    , Run DiskU [("/", "<fn=1><fc=#74746f>\xf0a0</fc></fn> <free>")] [] 120
+    , Run Com "/home/{{ user }}/.xmonad/cmus_status.sh" [] "cmus" 10
     ]
-  , font = "xft:Bitstream Vera Sans Mono:size=8:antialias=False"
+  , font = "xft:Bitstream Vera Sans Mono:size=9:antialias=True"
+  , additionalFonts = ["xft:FontAwesome:size=10"]
   , persistent = False
   }

@@ -23,11 +23,21 @@ main = do
     { logHook = dynamicLogWithPP xmobarPP
       { ppOutput = hPutStrLn xmproc
       , ppTitle = xmobarColor "green" "" . shorten 50
+      , ppCurrent = xmobarColor "yellow" ""
+      , ppHidden = xmobarColor "gray" ""
+      , ppLayout = wrap "<fn=1>" "</fn>" . myMap
+      , ppOrder = \(ws:l:t:_) -> [l,ws,t]
+      , ppSep = " "
       }
     }
 
+myMap :: String -> String
+myMap "Tall" = "\xf009"
+myMap "ThreeCol" = "\xf00a"
+myMap _ = "YouSuck"
+
 myConfig = defaultConfig
-  { terminal = "terminator"
+  { terminal = "{{ terminal }}"
   , borderWidth = 1
   , modMask = myMod
   , manageHook = placeHook myFloatingPlacement <+> insertPosition Below Newer <+> manageDocks <+> myManageHook <+> manageHook defaultConfig
@@ -35,6 +45,7 @@ myConfig = defaultConfig
   , normalBorderColor = "#0f0f0f"
   , layoutHook = myLayoutHook
   , handleEventHook = docksEventHook
+--  , workspaces = myWorkspaces
   } `additionalKeys` myKeys
 
 myManageHook = composeAll
@@ -54,6 +65,9 @@ myFloatingPlacement = withGaps (16, 0, 16, 0) (smart (0.5, 0.5))
 myMod = mod4Mask
 
 myKeys =
-  [ ((myMod, xK_Return), spawn "terminator" )
+  [ ((myMod, xK_Return), spawn $ XMonad.terminal myConfig )
   , ((myMod .|. shiftMask, xK_Return), windows W.swapMaster)
   ]
+
+myWorkspaces :: [WorkspaceId]
+myWorkspaces = ["\x03b1", "\xf121", "\xf122", "\xf123"]
