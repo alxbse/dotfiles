@@ -17,7 +17,6 @@ shell:
       - wheel
       - audio
       - video
-      - kvm
 
 {% for dir in ['source', 'mount', 'temp', 'music'] %}
 {{ dir }}_directory:

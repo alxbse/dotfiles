@@ -100,13 +100,19 @@ code:
       - gradle
 
 {% if 'vmx' in grains['cpu_flags'] and grains['virtual'] == 'physical'%}
-virtualization:
+virtualization_pkgs:
   pkg:
     - installed
     - pkgs:
       - qemu
       - ovmf
       - qemu-arch-extra
+
+kvm_membership:
+  group.present:
+    - name: kvm
+    - addusers:
+      - {{ dotfiles.user }}
 {% endif %}
 
 /etc/vconsole.conf:
