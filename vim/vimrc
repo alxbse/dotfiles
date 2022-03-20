@@ -1,10 +1,7 @@
 syntax on
 filetype plugin indent on
 
-let g:seoul256_background = 234
-let g:airline_powerline_fonts = 1
-
-colorscheme seoul256
+colorscheme elflord
 
 set laststatus=2
 set timeoutlen=50

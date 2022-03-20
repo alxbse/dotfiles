@@ -1,0 +1,54 @@
+input type:keyboard {
+  xkb_layout us
+  xkb_variant colemak
+}
+
+xwayland disable
+
+default_border pixel 1
+
+set $mod Mod4
+set $shift Shift
+set $left n
+set $down e
+set $up i
+set $right o
+set $term foot
+
+bar {
+  position top
+  mode hide
+  status_command i3status
+}
+
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+c reload
+
+bindsym $mod+$left focus left
+bindsym $mod+$right focus right
+bindsym $mod+$up focus up
+bindsym $mod+$down focus down
+
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$down move down
+
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2 
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+
+bindsym $mod+h splith
+bindsym $mod+v splitv
+
+exec swayidle -w timeout 180 'swaylock -f -c aabbcc' timeout 300 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"'
+
+bindsym $mod+f fullscreen
